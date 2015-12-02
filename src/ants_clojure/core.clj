@@ -17,7 +17,8 @@
 (defn create-ants []
   (for [i (range 0 ant-count)]
     {:x (rand-int width)
-     :y (rand-int height)}))
+     :y (rand-int height)
+     :color Color/BLACK}))
 
 (defn random-step []
   (- (* 2 (rand)) 1))
@@ -30,8 +31,10 @@
 (defn draw-ants [context]
   (.clearRect context 0 0 width height)
   (doseq [ant (deref ants)]
-    (.setFill context Color/BLACK)
+    (.setFill context (:color ant))
     (.fillOval context (:x ant) (:y ant) 5 5)))
+
+(defn aggravate-ant [])
 
 (defn fps [now]
   (let [diff (- now (deref last-timestamp))
