@@ -34,7 +34,16 @@
     (.setFill context (:color ant))
     (.fillOval context (:x ant) (:y ant) 5 5)))
 
-(defn aggravate-ant [])
+(defn aggravate-ant [ant]
+  (let [close-ants (filter (fn [ant2]
+                  (and (<= (Math/abs (- (:x ant) (:x ant2)))
+                           10)
+                       (<= (Math/abs (- (:y ant) (:y ant2)))
+                           10)))
+                (deref ants))]
+    (if (= 1 (count close-ants))
+      (assoc ant :color Color/BLACK)
+      (assoc ant :color Color/RED))))
 
 (defn fps [now]
   (let [diff (- now (deref last-timestamp))
@@ -51,7 +60,7 @@
                 (handle [now]
                   (.setText fps-label (str (fps now)))
                   (reset! last-timestamp now)
-                  (reset! ants (pmap move-ant (deref ants)))
+                  (reset! ants (doall (pmap aggravate-ant (pmap move-ant (deref ants)))))
                   (draw-ants context)))]
     (reset! ants (create-ants))
     (doto stage
